@@ -1,4 +1,4 @@
-# SVG to App Icon Generator 🎨
+# SVG/PNG to App Icon Generator 🎨
 [![Platform: Web](https://img.shields.io/badge/Platform-Web%20%7C%20PWA-blue)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
 [![Privacy: Local](https://img.shields.io/badge/Privacy-100%25%20Client--Side-green)]()
 
