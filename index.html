@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SVG Icon Converter</title>
+    <title>SVG/PNG Icon Converter</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23111'/><polygon points='8,24 16,8 24,24' fill='none' stroke='%2300e5ff' stroke-width='2' stroke-linejoin='round'/><circle cx='16' cy='16' r='3' fill='%2300e5ff'/><line x1='8' y1='24' x2='24' y2='24' stroke='%2300e5ff' stroke-width='2'/></svg>">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;800&display=swap');
@@ -458,7 +458,7 @@
                 <circle cx="22" cy="11" r="1.5" fill="#00e5ff"/>
             </svg>
             <div class="header-text">
-                <h1>SVG Icon Converter</h1>
+                <h1>SVG/PNG Icon Converter</h1>
                 <p>Multi-platform export tool</p>
             </div>
             <span class="version-tag">v2.0</span>
@@ -533,15 +533,15 @@
                 <path d="M24 32V16M24 16l-7 7M24 16l7 7" stroke="#00e5ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M8 36v4h32v-4" stroke="#5a5a6a" stroke-width="2" stroke-linecap="round"/>
             </svg>
-            <h2>Drop SVG file here</h2>
-            <p>or click to browse</p>
-            <input type="file" id="fileInput" accept=".svg,image/svg+xml">
+            <h2>Drop SVG or PNG file here</h2>
+            <p>or click to browse &nbsp;·&nbsp; use a square image for best results</p>
+            <input type="file" id="fileInput" accept=".svg,.png,image/svg+xml,image/png">
         </div>
 
         <div class="or-divider">OR</div>
 
         <div class="paste-area">
-            <h4>Paste SVG Code</h4>
+            <h4>Paste SVG Code <span style="color: var(--muted); font-weight: 400; font-size: 0.7rem; text-transform: none; letter-spacing: normal;">— SVG only, for PNG use the upload above</span></h4>
             <textarea id="svgCodeInput" placeholder="<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; ..."></textarea>
             <button class="btn-primary" id="processSvgBtn">Process SVG</button>
         </div>
@@ -566,7 +566,7 @@
 
     </div>
 
-    <footer>SVG Icon Converter &nbsp;·&nbsp; runs entirely in your browser &nbsp;·&nbsp; no uploads</footer>
+    <footer>SVG/PNG Icon Converter &nbsp;·&nbsp; runs entirely in your browser &nbsp;·&nbsp; no uploads</footer>
 
     <script>
         /*!
@@ -1028,6 +1028,7 @@
         // ── State ────────────────────────────────────────────────────────────
 
         let svgData = null;
+        let sourceType = 'svg'; // 'svg' or 'png' — tells the canvas helpers how to load svgData
         let currentFiles = PLATFORMS['web'].files;
 
         // ── DOM ──────────────────────────────────────────────────────────────
@@ -1073,6 +1074,7 @@
 
         clearBtn.addEventListener('click', () => {
             svgData = null;
+            sourceType = 'svg';
             previewSection.classList.remove('active');
             fileInput.value = '';
             svgCodeInput.value = '';
@@ -1088,17 +1090,27 @@
 
         async function handleSvgCode(code) {
             startProgress();
+            sourceType = 'svg';
             svgData = code;
             await generatePreviews();
             endProgress();
         }
 
         function handleFile(file) {
-            if (!file.type.includes('svg') && !file.name.endsWith('.svg')) { alert('Please upload an SVG file'); return; }
+            const isSvg = file.type.includes('svg') || file.name.toLowerCase().endsWith('.svg');
+            const isPng = file.type === 'image/png' || file.name.toLowerCase().endsWith('.png');
+            if (!isSvg && !isPng) { alert('Please upload an SVG or PNG file'); return; }
             startProgress();
+            sourceType = isSvg ? 'svg' : 'png';
             const reader = new FileReader();
             reader.onload = async e => { svgData = e.target.result; await generatePreviews(); endProgress(); };
-            reader.readAsText(file);
+            reader.onerror = () => {
+                console.error('File read error:', reader.error);
+                alert('Could not read that file. Please try again.');
+                endProgress();
+            };
+            if (isSvg) reader.readAsText(file);
+            else reader.readAsDataURL(file); // PNG (incl. transparent) needs to stay as a data URL, not text
         }
 
         // ── Preview generation ───────────────────────────────────────────────
@@ -1116,7 +1128,16 @@
 
                 if (file.type === 'png') {
                     const img = document.createElement('img');
-                    img.src = await svgToDataURL(svgData, Math.min(file.size, 128));
+                    try {
+                        img.src = await svgToDataURL(svgData, Math.min(file.size, 128));
+                    } catch (error) {
+                        console.error('Preview generation failed:', error);
+                        alert(`Couldn't read that ${sourceType === 'png' ? 'PNG' : 'SVG'} file — it may be corrupted or in an unsupported format. Please try a different file.`);
+                        previewGrid.innerHTML = '';
+                        svgData = null;
+                        fileInput.value = '';
+                        return;
+                    }
                     imgContainer.appendChild(img);
                 } else {
                     const icon = document.createElement('div');
@@ -1199,7 +1220,7 @@
             if (file.type === 'icns') return generateIcnsBlob(svgData);
         }
 
-        function pngBlob(svgString, size) {
+        function pngBlob(srcData, size) {
             return new Promise((resolve, reject) => {
                 const canvas = document.createElement('canvas');
                 canvas.width = canvas.height = size;
@@ -1209,14 +1230,20 @@
                 ctx.clearRect(0, 0, size, size);
                 
                 const img = new Image();
-                const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
+                const isPng = sourceType === 'png';
+                // PNG sources are already a data URL (read via readAsDataURL); SVG sources are
+                // raw markup text, so wrap them in a blob URL the <img> can load.
+                const blob = isPng ? null : new Blob([srcData], { type: 'image/svg+xml;charset=utf-8' });
+                const url = isPng ? srcData : URL.createObjectURL(blob);
                 
                 img.onload = () => {
                     try {
+                        // Always draws into a size×size square. A non-square source (SVG
+                        // viewBox or PNG dimensions) gets stretched/squished to fit, not
+                        // letterboxed or cropped — square sources give the cleanest results.
                         ctx.drawImage(img, 0, 0, size, size);
                         canvas.toBlob(b => { 
-                            URL.revokeObjectURL(url);
+                            if (!isPng) URL.revokeObjectURL(url);
                             if (b) {
                                 resolve(b);
                             } else {
@@ -1224,31 +1251,36 @@
                             }
                         }, 'image/png', 1.0);
                     } catch (error) {
-                        URL.revokeObjectURL(url);
+                        if (!isPng) URL.revokeObjectURL(url);
                         reject(error);
                     }
                 };
                 
                 img.onerror = () => {
-                    URL.revokeObjectURL(url);
-                    reject(new Error(`Failed to load SVG for size ${size}`));
+                    if (!isPng) URL.revokeObjectURL(url);
+                    reject(new Error(`Failed to load image for size ${size}`));
                 };
                 
                 img.src = url;
             });
         }
 
-        function svgToDataURL(svgString, size) {
-            return new Promise(resolve => {
+        function svgToDataURL(srcData, size) {
+            return new Promise((resolve, reject) => {
                 const canvas = document.createElement('canvas');
                 canvas.width = canvas.height = size;
                 const img = new Image();
-                const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
+                const isPng = sourceType === 'png';
+                const blob = isPng ? null : new Blob([srcData], { type: 'image/svg+xml;charset=utf-8' });
+                const url = isPng ? srcData : URL.createObjectURL(blob);
                 img.onload = () => {
                     canvas.getContext('2d').drawImage(img, 0, 0, size, size);
                     resolve(canvas.toDataURL('image/png'));
-                    URL.revokeObjectURL(url);
+                    if (!isPng) URL.revokeObjectURL(url);
+                };
+                img.onerror = () => {
+                    if (!isPng) URL.revokeObjectURL(url);
+                    reject(new Error(`Failed to load image for preview at size ${size}`));
                 };
                 img.src = url;
             });
