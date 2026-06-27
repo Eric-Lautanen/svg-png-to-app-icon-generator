@@ -4,19 +4,19 @@
 
 **The fastest way to generate multi-platform app icons without leaving your browser.**
 
-### 🚀 [Launch Live Demo](https://eric-lautanen.github.io/svg-to-app-icon-generator/)
+### 🚀 [Launch Live Demo](https://eric-lautanen.github.io/svg-png-to-app-icon-generator/)
 
 ---
 
-A powerful, **single-file** tool to instantly convert SVG files into perfectly sized app icons, favicons, and launch images for every major platform. 
+A powerful, **single-file** tool to instantly convert SVG/PNG files into perfectly sized app icons, favicons, and launch images for every major platform. 
 
 ## ✨ Why use this converter?
 
 Most icon generators require you to upload your files to a server, process them slowly, or pay for premium formats. 
 
-**SVG to App Icon Generator** runs entirely in your browser. 
+**SVG/PNG to App Icon Generator** runs entirely in your browser. 
 
-* **🔒 100% Private:** Your SVG never leaves your device. No server uploads.
+* **🔒 100% Private:** Your SVG/PNG never leaves your device. No server uploads.
 * **⚡ Instant:** Powered by modern Canvas APIs and client-side processing.
 * **📦 All-in-One:** Generates `.ico`, `.icns`, and `.png` formats automatically.
 * **📁 Zero Config:** Downloads a structured ZIP file ready to drop into your project folders.
@@ -63,7 +63,7 @@ Since this is a single-file application, you don't need Node.js or a local serve
 
 1. Download the `index.html` file.
 2. Open it in any modern web browser.
-3. Paste your SVG code or upload your file.
+3. Paste your SVG or upload your file/image PNG.
 4. Select your target platform and click **Generate**.
 
 ### ⚠️ Windows 11 ZIP Extraction Note
