@@ -498,6 +498,9 @@
                             <option value="nwjs">NW.js</option>
                             <option value="flutter_desktop">Flutter Desktop</option>
                             <option value="wails">Wails (Go)</option>
+                            <option value="qt">Qt (C++ / Python)</option>
+                            <option value="gtk">GTK / GNOME</option>
+                            <option value="dotnet_maui">.NET MAUI</option>
                         </optgroup>
 
                         <optgroup label="── Web & PWA ──">
@@ -509,6 +512,10 @@
                             <option value="android">Android (mipmap + play store)</option>
                             <option value="ios">iOS / iPadOS (App Store)</option>
                             <option value="watchos">watchOS (Apple Watch)</option>
+                            <option value="wear_os">Wear OS (Google Watch)</option>
+                            <option value="tvos">tvOS (Apple TV)</option>
+                            <option value="visionos">visionOS (Apple Vision Pro)</option>
+                            <option value="android_tv">Android TV / Google TV</option>
                             <option value="flutter_mobile">Flutter Mobile</option>
                             <option value="tauri_mobile">Tauri Mobile (v2)</option>
                             <option value="react_native">React Native</option>
@@ -521,14 +528,17 @@
                             <option value="macos_app">macOS App Bundle (.icns)</option>
                             <option value="linux_app">Linux App (Freedesktop / AppImage)</option>
                             <option value="chrome_extension">Chrome Extension</option>
+                            <option value="edge_extension">Edge Extension</option>
                             <option value="firefox_extension">Firefox Extension</option>
                             <option value="safari_extension">Safari Extension</option>
                         </optgroup>
 
                         <optgroup label="── Dev Tools & Plugins ──">
                             <option value="vscode_extension">VS Code Extension</option>
+                            <option value="jetbrains_plugin">JetBrains Plugin</option>
                             <option value="raycast">Raycast Extension</option>
                             <option value="figma_plugin">Figma Plugin</option>
+                            <option value="ms_teams_app">Microsoft Teams App</option>
                         </optgroup>
 
                         <optgroup label="── Game Engines & Stores ──">
@@ -536,6 +546,8 @@
                             <option value="godot">Godot Engine</option>
                             <option value="unreal">Unreal Engine</option>
                             <option value="steam">Steam Store</option>
+                            <option value="epic_games_store">Epic Games Store</option>
+                            <option value="itchio">itch.io</option>
                         </optgroup>
 
                         <optgroup label="── Bots & Social Apps ──">
@@ -730,7 +742,7 @@
                     { name: 'apple-touch-icon.png', type: 'png', size: 180 },
                     { name: 'icon-192.png',         type: 'png', size: 192 },
                     { name: 'icon-512.png',         type: 'png', size: 512 },
-                    { name: 'og-image.png',         type: 'png', size: 1200 },
+                    { name: 'og-image.png',         type: 'png', size: 1200 }, // og:image is 1200x630 — crop height after export
                     { name: 'ms-tile-150.png',      type: 'png', size: 150 },
                     { name: 'ms-tile-310.png',      type: 'png', size: 310 },
                 ]
@@ -857,7 +869,7 @@
                 files: [
                     { name: 'icon.png',              type: 'png', size: 1024 },
                     { name: 'adaptive-icon.png',       type: 'png', size: 1024 },
-                    { name: 'splash-icon.png',         type: 'png', size: 1284 },
+                    { name: 'splash-icon.png',         type: 'png', size: 1284 }, // center subject here; Expo canvas is 1284x2778 tall
                     { name: 'favicon.png',             type: 'png', size: 32 },
                     { name: 'notification-icon.png',   type: 'png', size: 96 },
                 ]
@@ -867,16 +879,19 @@
             windows_store: {
                 label: 'Windows Store / MSIX — place in Assets/ folder',
                 files: [
-                    { name: 'Square44x44Logo.png',        type: 'png', size: 44 },
+                    { name: 'Square20x20Logo.png',           type: 'png', size: 20 },
+                    { name: 'Square20x20Logo.scale-200.png', type: 'png', size: 40 },
+                    { name: 'Square44x44Logo.png',           type: 'png', size: 44 },
                     { name: 'Square44x44Logo.scale-200.png', type: 'png', size: 88 },
-                    { name: 'Square71x71Logo.png',        type: 'png', size: 71 },
-                    { name: 'Square150x150Logo.png',      type: 'png', size: 150 },
+                    { name: 'Square71x71Logo.png',           type: 'png', size: 71 },
+                    { name: 'Square150x150Logo.png',         type: 'png', size: 150 },
                     { name: 'Square150x150Logo.scale-200.png', type: 'png', size: 300 },
-                    { name: 'Square284x284Logo.png',      type: 'png', size: 284 },
-                    { name: 'Square310x310Logo.png',      type: 'png', size: 310 },
-                    { name: 'StoreLogo.png',              type: 'png', size: 50 },
-                    { name: 'StoreLogo.scale-200.png',    type: 'png', size: 100 },
-                    { name: 'icon.ico',                   type: 'ico' },
+                    { name: 'Square284x284Logo.png',         type: 'png', size: 284 },
+                    { name: 'Square310x310Logo.png',         type: 'png', size: 310 },
+                    { name: 'Wide310x150Logo.png',           type: 'png', size: 310 }, // 310x150 wide tile — export as square, crop in Assets
+                    { name: 'StoreLogo.png',                 type: 'png', size: 50 },
+                    { name: 'StoreLogo.scale-200.png',       type: 'png', size: 100 },
+                    { name: 'icon.ico',                      type: 'ico' },
                 ]
             },
             macos_app: {
@@ -966,7 +981,7 @@
                 label: 'Figma Plugin — reference in manifest.json',
                 files: [
                     { name: 'icon-128.png',      type: 'png', size: 128 },
-                    { name: 'cover-1920.png',    type: 'png', size: 1920 }, // 1920x960 recommended
+                    { name: 'cover-1920.png',    type: 'png', size: 1920 }, // final: 1920x960 — crop height after export
                 ]
             },
 
@@ -1010,14 +1025,14 @@
                 ]
             },
             steam: {
-                label: 'Steam Store — Upload via Steamworks Partner site',
+                label: 'Steam Store — Upload via Steamworks Partner site (non-square assets need manual crop)',
                 files: [
-                    { name: 'header_capsule.png', type: 'png', size: 460 }, // 460x215
-                    { name: 'small_capsule.png',  type: 'png', size: 231 }, // 231x87
-                    { name: 'main_capsule.png',   type: 'png', size: 616 }, // 616x353
-                    { name: 'library_hero.png',   type: 'png', size: 3840 }, // 3840x1240 (max)
-                    { name: 'library_logo.png',   type: 'png', size: 1280 }, // 1280x720 (max)
-                    { name: 'library_600x900.png',type: 'png', size: 600 }, // Vertical grid
+                    { name: 'header_capsule.png', type: 'png', size: 460 }, // final: 460x215 — crop height after export
+                    { name: 'small_capsule.png',  type: 'png', size: 231 }, // final: 231x87 — crop height after export
+                    { name: 'main_capsule.png',   type: 'png', size: 616 }, // final: 616x353 — crop height after export
+                    { name: 'library_hero.png',   type: 'png', size: 3840 }, // final: 3840x1240 — crop height after export
+                    { name: 'library_logo.png',   type: 'png', size: 1280 }, // final: up to 1280x720 — crop height after export
+                    { name: 'library_600x900.png',type: 'png', size: 600 }, // vertical capsule grid — square output is close enough
                     { name: 'client_icon.ico',    type: 'ico' },
                 ]
             },
@@ -1027,7 +1042,7 @@
                 label: 'Discord App / Bot — Upload to Developer Portal',
                 files: [
                     { name: 'app_icon.png',       type: 'png', size: 512 },
-                    { name: 'cover_image.png',    type: 'png', size: 320 }, // 320x180 (for bot profiles)
+                    { name: 'cover_image.png',    type: 'png', size: 320 }, // final: 320x180 — crop height after export
                 ]
             },
             slack_app: {
@@ -1042,6 +1057,129 @@
                 files: [
                     { name: 'bot_pic.png',        type: 'png', size: 640 }, // 640x640 minimum
                     { name: 'header_pic.png',     type: 'png', size: 1280 }, // 1280x720 (placeholder)
+                ]
+            },
+
+            // --- Additional Desktop Frameworks ---
+            qt: {
+                label: 'Qt — embed via .rc (Windows), .icns (macOS), hicolor theme (Linux)',
+                files: [
+                    { name: 'icon_16x16.png',    type: 'png', size: 16 },
+                    { name: 'icon_24x24.png',    type: 'png', size: 24 },
+                    { name: 'icon_32x32.png',    type: 'png', size: 32 },
+                    { name: 'icon_48x48.png',    type: 'png', size: 48 },
+                    { name: 'icon_64x64.png',    type: 'png', size: 64 },
+                    { name: 'icon_128x128.png',  type: 'png', size: 128 },
+                    { name: 'icon_256x256.png',  type: 'png', size: 256 },
+                    { name: 'icon_512x512.png',  type: 'png', size: 512 },
+                    { name: 'icon.ico',          type: 'ico' },
+                    { name: 'icon.icns',         type: 'icns' },
+                ]
+            },
+            gtk: {
+                label: 'GTK / GNOME — install to /usr/share/icons/hicolor/',
+                files: [
+                    { name: '16x16/apps/icon.png',   type: 'png', size: 16 },
+                    { name: '22x22/apps/icon.png',   type: 'png', size: 22 },
+                    { name: '24x24/apps/icon.png',   type: 'png', size: 24 },
+                    { name: '32x32/apps/icon.png',   type: 'png', size: 32 },
+                    { name: '48x48/apps/icon.png',   type: 'png', size: 48 },
+                    { name: '64x64/apps/icon.png',   type: 'png', size: 64 },
+                    { name: '128x128/apps/icon.png', type: 'png', size: 128 },
+                    { name: '256x256/apps/icon.png', type: 'png', size: 256 },
+                    { name: 'scalable/apps/icon.svg', type: 'png', size: 512 }, // SVG preferred
+                ]
+            },
+            dotnet_maui: {
+                label: '.NET MAUI — place in Resources/AppIcon/, set BuildAction to MauiIcon',
+                files: [
+                    { name: 'appicon.png',             type: 'png', size: 1024 }, // MAUI auto-resizes from this
+                    { name: 'appicon_foreground.png',  type: 'png', size: 1024 }, // adaptive icon foreground
+                    { name: 'appicon_background.png',  type: 'png', size: 1024 }, // adaptive icon background
+                ]
+            },
+
+            // --- Additional Mobile & Wearables ---
+            wear_os: {
+                label: 'Wear OS — same mipmap dirs as Android; use adaptive icons',
+                files: [
+                    { name: 'mipmap-mdpi/ic_launcher.png',    type: 'png', size: 48 },
+                    { name: 'mipmap-hdpi/ic_launcher.png',    type: 'png', size: 72 },
+                    { name: 'mipmap-xhdpi/ic_launcher.png',   type: 'png', size: 96 },
+                    { name: 'mipmap-xxhdpi/ic_launcher.png',  type: 'png', size: 144 },
+                    { name: 'mipmap-xxxhdpi/ic_launcher.png', type: 'png', size: 192 },
+                    { name: 'play_store_512.png',             type: 'png', size: 512 }, // Google Play listing
+                ]
+            },
+            tvos: {
+                label: 'tvOS — place in Assets.xcassets/App Icon & Top Shelf Image.brandassets/',
+                files: [
+                    { name: 'App-Icon-Small-400x240.png',     type: 'png', size: 400 }, // 400×240 Small
+                    { name: 'App-Icon-Small-800x480.png',     type: 'png', size: 800 }, // 800×480 Small @2x
+                    { name: 'App-Icon-Large-1280x768.png',    type: 'png', size: 1280 }, // 1280×768 Large (App Store)
+                    { name: 'Top-Shelf-2320x720.png',         type: 'png', size: 2320 }, // 2320×720 Top Shelf wide
+                    { name: 'Top-Shelf-1920x720.png',         type: 'png', size: 1920 }, // 1920×720 Top Shelf
+                ]
+            },
+            visionos: {
+                label: 'visionOS — place in Assets.xcassets/AppIcon.solidimagestack/',
+                files: [
+                    { name: 'Back-1024x1024.png',   type: 'png', size: 1024 }, // Background layer (fully opaque)
+                    { name: 'Middle-1024x1024.png', type: 'png', size: 1024 }, // Middle layer (can be transparent)
+                    { name: 'Front-1024x1024.png',  type: 'png', size: 1024 }, // Front layer (can be transparent)
+                ]
+            },
+            android_tv: {
+                label: 'Android TV / Google TV — banner (16:9) + adaptive square icon in AndroidManifest.xml',
+                files: [
+                    { name: 'banner-xhdpi-320x180.png',   type: 'png', size: 320 }, // 320×180 xhdpi banner — crop height after export
+                    { name: 'mipmap-xhdpi/ic_launcher.png',   type: 'png', size: 96 },  // square icon (Google TV circular launcher)
+                    { name: 'mipmap-xxhdpi/ic_launcher.png',  type: 'png', size: 144 },
+                    { name: 'mipmap-xxxhdpi/ic_launcher.png', type: 'png', size: 192 },
+                    { name: 'play_store_512.png',             type: 'png', size: 512 },
+                ]
+            },
+
+            // --- Additional Browser Extensions ---
+            edge_extension: {
+                label: 'Edge Extension — same Manifest V3 format as Chrome; submit to Edge Add-ons store',
+                files: [
+                    { name: 'icon16.png',  type: 'png', size: 16 },
+                    { name: 'icon32.png',  type: 'png', size: 32 },
+                    { name: 'icon48.png',  type: 'png', size: 48 },
+                    { name: 'icon128.png', type: 'png', size: 128 },
+                ]
+            },
+
+            // --- Additional Dev Tools & Plugins ---
+            jetbrains_plugin: {
+                label: 'JetBrains Plugin — pluginIcon.svg in META-INF/ (SVG required, ideally < 3 kB)',
+                files: [
+                    { name: 'pluginIcon.png',      type: 'png', size: 40 },  // 40×40 rendered display size
+                    { name: 'pluginIcon_dark.png', type: 'png', size: 40 },  // dark-theme variant
+                ]
+            },
+            ms_teams_app: {
+                label: 'Microsoft Teams App — include color.png + outline.png in app package zip',
+                files: [
+                    { name: 'color.png',   type: 'png', size: 192 }, // 192×192 full-color icon
+                    { name: 'outline.png', type: 'png', size: 32 },  // 32×32 monochrome transparent outline
+                ]
+            },
+
+            // --- Additional Game Stores ---
+            epic_games_store: {
+                label: 'Epic Games Store — upload via Dev Portal; achievement icons 256×256',
+                files: [
+                    { name: 'achievement_icon.png', type: 'png', size: 256 }, // 256×256 per achievement
+                    { name: 'store_icon_512.png',   type: 'png', size: 512 }, // general product icon
+                ]
+            },
+            itchio: {
+                label: 'itch.io — upload as Cover Image on your project page',
+                files: [
+                    { name: 'cover_630x500.png', type: 'png', size: 630 }, // 630×500 recommended (315:250 ratio)
+                    { name: 'cover_315x250.png', type: 'png', size: 315 }, // 315×250 minimum
                 ]
             },
         };
@@ -1239,6 +1377,7 @@
             if (file.type === 'png')  return pngBlob(svgData, file.size);
             if (file.type === 'ico')  return generateIcoBlob(svgData);
             if (file.type === 'icns') return generateIcnsBlob(svgData);
+            throw new Error(`Unknown file type: ${file.type}`);
         }
 
         function pngBlob(srcData, size) {
@@ -1296,8 +1435,8 @@
                 const url = isPng ? srcData : URL.createObjectURL(blob);
                 img.onload = () => {
                     canvas.getContext('2d').drawImage(img, 0, 0, size, size);
+                    if (!isPng) URL.revokeObjectURL(url); // revoke before resolve to avoid race
                     resolve(canvas.toDataURL('image/png'));
-                    if (!isPng) URL.revokeObjectURL(url);
                 };
                 img.onerror = () => {
                     if (!isPng) URL.revokeObjectURL(url);
@@ -1351,7 +1490,7 @@
             let imageDataOffset = headerSize;
             let entryOffset = 6;
             
-            images.forEach((img, index) => {
+            images.forEach((img) => {
                 const width = img.size >= 256 ? 0 : img.size;   // 0 means 256
                 const height = img.size >= 256 ? 0 : img.size;
                 
