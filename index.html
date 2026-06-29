@@ -150,6 +150,27 @@
 
         select#platformSelect:focus { border-color: var(--accent); }
 
+        /* ── Dropdown Scrollbar — always visible ── */
+        select#platformSelect::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        select#platformSelect::-webkit-scrollbar-track {
+            background: var(--surface2);
+            border-radius: 3px;
+        }
+
+        select#platformSelect::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 3px;
+            min-height: 24px;
+        }
+
+        select#platformSelect::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+            opacity: 0.85;
+        }
+
         optgroup {
             color: var(--muted);
             font-size: 0.75rem;
